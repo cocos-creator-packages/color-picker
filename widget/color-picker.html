@@ -1,0 +1,43 @@
+<script type="text/javascript" src="app://bower_components/chroma.js/chroma.js"></script>
+
+<dom-module id="color-picker">
+    <link rel="import" type="css" href="color-picker.css">
+
+    <template>
+        <div class="color-group">
+            <div id="hueCtrl" class="hue" on-mousedown="_hueCtrlMouseDownAction">
+                <div id="hueHandle" class="handle">
+                    <i class="fa fa-caret-right"></i>
+                </div>
+            </div>
+            <div id="colorCtrl" class="color" on-mousedown="_colorCtrlMouseDownAction">
+                <div id="colorHandle" class="handle">
+                    <i style="color: white;" class="fa fa-circle-o"></i>
+                    <i style="color: black;" class="fa fa-circle-thin"></i>
+                </div>
+            </div>
+            <div id="opacityCtrl" class="opacity" on-mousedown="_opacityCtrlMouseDownAction">
+                <div id="opacityHandle" class="handle">
+                    <i class="fa fa-caret-left"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="inputGroup">
+            <div class="input">
+                <editor-unit-input hint="R" on-input-value-changed="_inputChanged"  min="0" max="255" input-value="{{value.r}}"></editor-unit-input>
+            </div>
+            <div class="input">
+                <editor-unit-input hint="G" on-input-value-changed="_inputChanged" min="0" max="255" input-value="{{value.g}}"></editor-unit-input>
+            </div>
+            <div class="input">
+                <editor-unit-input hint="B" on-input-value-changed="_inputChanged" min="0" max="255" input-value="{{value.b}}"></editor-unit-input>
+            </div>
+            <div class="input">
+                <editor-unit-input hint="ALPHA" on-input-value-changed="_inputChanged" min="0" max="1" step="0.01" input-value="{{value.a}}"></editor-unit-input>
+            </div>
+        </div>
+    </template>
+
+    <script type="text/javascript" src="color-picker.js"></script>
+</dom-module>
