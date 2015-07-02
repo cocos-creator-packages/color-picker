@@ -168,7 +168,7 @@ Editor.registerWidget( 'color-picker', {
     },
 
     _fireColor2Rgba: function (value) {
-        return new Object({r: Math.round(value.r*255), g: Math.round(value.g*255), b: Math.round(value.b*255), a: value.a});
+        return new Object({r: value.r*255|0, g: value.g*255|0, b: value.b*255|0, a: value.a});
     },
 
     _floatFixed: function (value) {
@@ -182,5 +182,9 @@ Editor.registerWidget( 'color-picker', {
         this.hsv = this._Rgba2FireColor(this.value).toHSV();
         this._h = this.hsv.h;
         this._repaint();
+    },
+
+    close: function () {
+        this.remove();
     },
 });
