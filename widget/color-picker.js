@@ -18,14 +18,6 @@ Editor.registerWidget( 'color-picker', {
     },
 
     created: function () {
-        this._Rgba = function (r, g, b, a) {
-            return {
-                r: r,
-                g: g,
-                b: b,
-                a: a
-            };
-        };
         this.dragMove = false;
     },
 
@@ -43,7 +35,7 @@ Editor.registerWidget( 'color-picker', {
     },
 
     setColor: function ( value ) {
-        this.value = new this._Rgba(value.r,value.g,value.b,value.a);
+        this.value = new Object({r: value.r, g: value.g, b: value.b, a: value.a});
         this.hsv = this._Rgba2FireColor(this.value).toHSV();
         this._h = this.hsv.h;
         this._repaint();
@@ -58,10 +50,7 @@ Editor.registerWidget( 'color-picker', {
         this.$.hueHandle.style.top = (1.0-this._h)*100 + "%";
         this.$.colorHandle.style.left = this.hsv.s*100 + "%";
         this.$.colorHandle.style.top = (1.0-this.hsv.v)*100 + "%";
-    },
-
-    _updateColor: function () {
-        this._repaint();
+        this.fire('color-changed');
     },
 
     _hueCtrlMouseDownAction: function ( event ) {
@@ -76,7 +65,7 @@ Editor.registerWidget( 'color-picker', {
             offsetY = Math.max( Math.min( offsetY, 1.0 ), 0.001 );
 
             this.hsv.h = 1.0 - offsetY;
-            this._updateColor();
+            this._repaint();
             var h = Math.round( this.hsv.h * 100.0 )/100.0;
             var _value = this._Rgba2FireColor(this.value).fromHSV( h, this.hsv.s, this.hsv.v );
             this._h = this.hsv.h;
@@ -84,7 +73,7 @@ Editor.registerWidget( 'color-picker', {
             event.stopPropagation();
         };
         updateMouseMove.call(this,event);
-        this._updateColor();
+        this._repaint();
 
         var mouseMoveHandle = updateMouseMove.bind(this);
         var mouseUpHandle = (function(event) {
@@ -121,7 +110,7 @@ Editor.registerWidget( 'color-picker', {
             var h = Math.round( this._h * 100.0 ) / 100.0;
             var _value = this._Rgba2FireColor(this.value).fromHSV( h, this.hsv.s, this.hsv.v );
             this.value = this._fireColor2Rgba(_value);
-            this._updateColor();
+            this._repaint();
             event.stopPropagation();
         };
         updateMouseMove.call(this,event);
@@ -151,9 +140,9 @@ Editor.registerWidget( 'color-picker', {
         var updateMouseMove = function (event) {
             var offsetY = (event.clientY - mouseDownY)/this.$.opacityCtrl.clientHeight;
             offsetY = Math.max( Math.min( offsetY, 1.0 ), 0.0 );
-            this.value.a = this.floatFixed(1.0 - offsetY);
-            this.value = new this._Rgba(this.value.r, this.value.g, this.value.b,this.value.a);
-            this._updateColor();
+            this.value.a = this._floatFixed(1.0 - offsetY);
+            this.value = new Object({r: this.value.r, g: this.value.g, b: this.value.b, a: this.value.a});
+            this._repaint();
 
             event.stopPropagation();
         };
@@ -179,10 +168,10 @@ Editor.registerWidget( 'color-picker', {
     },
 
     _fireColor2Rgba: function (value) {
-        return new this._Rgba(Math.round(value.r*255),Math.round(value.g*255),Math.round(value.b*255),value.a);
+        return new Object({r: Math.round(value.r*255), g: Math.round(value.g*255), b: Math.round(value.b*255), a: value.a});
     },
 
-    floatFixed: function (value) {
+    _floatFixed: function (value) {
         return parseFloat(value.toFixed(2));
     },
 
@@ -192,6 +181,6 @@ Editor.registerWidget( 'color-picker', {
         }
         this.hsv = this._Rgba2FireColor(this.value).toHSV();
         this._h = this.hsv.h;
-        this._updateColor();
+        this._repaint();
     },
 });
