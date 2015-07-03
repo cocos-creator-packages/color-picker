@@ -1,0 +1,15 @@
+{
+  "name": "color-picker",
+  "version": "0.0.1",
+  "description": "A Color-Picker Element",
+  "author": "Firebox Technology",
+  "hosts": {
+      "editor-framework": "^0.3.3"
+  },
+  "widgets": {
+    "color-picker": "widget/color-picker.html"
+  },
+  "tests": [
+    "test/basic.html"
+  ]
+}
