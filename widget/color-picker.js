@@ -2,17 +2,19 @@ Editor.registerWidget( 'color-picker', {
     is: 'color-picker',
 
     properties: {
+        color: {
+            type: Object,
+            value: function () {
+                return new Fire.Color( 1.0, 1.0, 1.0, 1.0 );
+            },
+            notity: true,
+        },
+
         value: {
             type: Object,
             value: function () {
-                return {
-                    r: 255,
-                    g: 255,
-                    b: 255,
-                    a: 1
-                }
+                return [0,0,0,1];
             },
-            notity: true,
             observer: '_valueChanged'
         }
     },
@@ -22,35 +24,33 @@ Editor.registerWidget( 'color-picker', {
     },
 
     ready: function () {
-        this.setColor(this.value);
-        this._h = 0;
+        this.setColor(this.color);
+    },
+
+    toInt: function(value) {
+        return value * 255 | 0;
     },
 
     _valueChanged: function () {
-        if (!this.value) {
-            return;
-        }
-        this.hsv = this._Rgba2FireColor(this.value).toHSV();
-        this._repaint();
+        this.fire('color-changed');
     },
 
     setColor: function ( value ) {
-        this.value = new Object({r: value.r, g: value.g, b: value.b, a: value.a});
-        this.hsv = this._Rgba2FireColor(this.value).toHSV();
-        this._h = this.hsv.h;
+        this.color = value;
+        this.hsv = this.color.toHSV();
+        this._notifyColor();
         this._repaint();
     },
 
     _repaint: function () {
-        var cssRGB = Fire.hsv2rgb( this._h, 1, 1 );
+        var cssRGB = Fire.hsv2rgb( this.hsv.h, 1, 1 );
         cssRGB = "rgb("+ (cssRGB.r * 255|0) + "," + (cssRGB.g * 255 | 0) + "," + (cssRGB.b * 255 | 0) + ")";
         this.$.colorCtrl.style.backgroundColor = cssRGB;
         this.$.opacityCtrl.style.backgroundColor = cssRGB;
-        this.$.opacityHandle.style.top = (1.0-this.value.a)*100 + "%";
-        this.$.hueHandle.style.top = (1.0-this._h)*100 + "%";
+        this.$.opacityHandle.style.top = (1.0-this.color.a)*100 + "%";
+        this.$.hueHandle.style.top = (1.0-this.hsv.h)*100 + "%";
         this.$.colorHandle.style.left = this.hsv.s*100 + "%";
         this.$.colorHandle.style.top = (1.0-this.hsv.v)*100 + "%";
-        this.fire('color-changed');
     },
 
     _hueCtrlMouseDownAction: function ( event ) {
@@ -67,9 +67,8 @@ Editor.registerWidget( 'color-picker', {
             this.hsv.h = 1.0 - offsetY;
             this._repaint();
             var h = Math.round( this.hsv.h * 100.0 )/100.0;
-            var _value = this._Rgba2FireColor(this.value).fromHSV( h, this.hsv.s, this.hsv.v );
-            this._h = this.hsv.h;
-            this.value = this._fireColor2Rgba(_value);
+            this.color.fromHSV( h, this.hsv.s, this.hsv.v );
+            this._notifyColor();
             event.stopPropagation();
         };
         updateMouseMove.call(this,event);
@@ -106,10 +105,10 @@ Editor.registerWidget( 'color-picker', {
             offsetY = Math.max( Math.min( offsetY, 1.0 ), 0.0 );
 
             this.hsv.s = offsetX;
-            this.hsv.v = 1.0 - offsetY;
-            var h = Math.round( this._h * 100.0 ) / 100.0;
-            var _value = this._Rgba2FireColor(this.value).fromHSV( h, this.hsv.s, this.hsv.v );
-            this.value = this._fireColor2Rgba(_value);
+            this.hsv.v = 1.0-offsetY;
+            var h = Math.round( this.hsv.h * 100.0 )/100.0;
+            this.color.fromHSV( h, this.hsv.s, this.hsv.v );
+            this._notifyColor();
             this._repaint();
             event.stopPropagation();
         };
@@ -140,8 +139,8 @@ Editor.registerWidget( 'color-picker', {
         var updateMouseMove = function (event) {
             var offsetY = (event.clientY - mouseDownY)/this.$.opacityCtrl.clientHeight;
             offsetY = Math.max( Math.min( offsetY, 1.0 ), 0.0 );
-            this.value.a = this._floatFixed(1.0 - offsetY);
-            this.value = new Object({r: this.value.r, g: this.value.g, b: this.value.b, a: this.value.a});
+            this.color.a = this._floatFixed(1.0-offsetY);
+            this._notifyColor();
             this._repaint();
 
             event.stopPropagation();
@@ -163,24 +162,39 @@ Editor.registerWidget( 'color-picker', {
         event.stopPropagation();
     },
 
-    _Rgba2FireColor: function (value) {
-        return new Fire.color(value.r/255,value.g/255,value.b/255,value.a);
-    },
-
-    _fireColor2Rgba: function (value) {
-        return new Object({r: value.r*255|0, g: value.g*255|0, b: value.b*255|0, a: value.a});
+    _notifyColor: function () {
+        this.color = new Fire.color(this.color.r, this.color.g, this.color.b, this.color.a);
+        this.value = new Array(this.color.r * 255|0, this.color.g * 255|0, this.color.b * 255|0, this.color.a);
     },
 
     _floatFixed: function (value) {
         return parseFloat(value.toFixed(2));
     },
 
-    _inputChanged: function () {
-        if (!this.value || this.dragMove === true) {
+    _inputChanged: function (event) {
+        if (!this.color || this.dragMove === true) {
             return;
         }
-        this.hsv = this._Rgba2FireColor(this.value).toHSV();
-        this._h = this.hsv.h;
+        switch (event.target.hint) {
+            case 'R':
+                this.color.r = event.target.inputValue / 255;
+            break;
+
+            case 'G':
+                this.color.g = event.target.inputValue/255;
+            break;
+
+            case 'B':
+                this.color.b = event.target.inputValue/255;
+            break;
+
+            case 'ALPHA':
+                this.color.a = event.target.inputValue;
+            break
+        }
+
+        this._notifyColor();
+        this.hsv = this.color.toHSV();
         this._repaint();
     },
 

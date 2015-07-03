@@ -8,5 +8,8 @@
   },
   "widgets": {
     "color-picker": "widget/color-picker.html"
-  }
+  },
+  "tests": [
+    "test/basic.html"
+  ]
 }

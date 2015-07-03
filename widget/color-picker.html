@@ -23,16 +23,16 @@
 
         <div class="inputGroup">
             <div class="input">
-                <editor-unit-input hint="R" on-input-value-changed="_inputChanged"  min="0" max="255" input-value="{{value.r}}"></editor-unit-input>
+                <editor-unit-input hint="R" on-input-value-changed="_inputChanged"  min="0" max="255" input-value="{{toInt(color.r)}}"></editor-unit-input>
             </div>
             <div class="input">
-                <editor-unit-input hint="G" on-input-value-changed="_inputChanged" min="0" max="255" input-value="{{value.g}}"></editor-unit-input>
+                <editor-unit-input hint="G" on-input-value-changed="_inputChanged" min="0" max="255" input-value="{{toInt(color.g)}}"></editor-unit-input>
             </div>
             <div class="input">
-                <editor-unit-input hint="B" on-input-value-changed="_inputChanged" min="0" max="255" input-value="{{value.b}}"></editor-unit-input>
+                <editor-unit-input hint="B" on-input-value-changed="_inputChanged" min="0" max="255" input-value="{{toInt(color.b)}}"></editor-unit-input>
             </div>
             <div class="input">
-                <editor-unit-input hint="ALPHA" on-input-value-changed="_inputChanged" min="0" max="1" step="0.01" input-value="{{value.a}}"></editor-unit-input>
+                <editor-unit-input hint="ALPHA" on-input-value-changed="_inputChanged" min="0" max="1" step="0.01" input-value="{{color.a}}"></editor-unit-input>
             </div>
         </div>
     </template>
