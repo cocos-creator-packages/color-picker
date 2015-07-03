@@ -5,13 +5,19 @@ Editor.registerWidget( 'color-picker', {
         value: {
             type: Object,
             value: function () {
-                return {r: 255,g: 255,b: 255,a: 1};
+                return {
+                    r: 255,
+                    g: 255,
+                    b: 255,
+                    a: 1,
+                };
             },
+            notify: true,
         },
     },
 
     created: function () {
-        this.dragMove = false;
+        this._dragging = false;
     },
 
     ready: function () {
@@ -21,7 +27,6 @@ Editor.registerWidget( 'color-picker', {
     setColor: function ( value ) {
         this.value = value;
         this.hsv = this.rgb2hsv(this.value.r, this.value.g, this.value.b);
-        this._notifyColor();
         this._repaint();
     },
 
@@ -30,57 +35,62 @@ Editor.registerWidget( 'color-picker', {
         cssRGB = chroma(cssRGB.r, cssRGB.g, cssRGB.b).css('rgb');
         this.$.colorCtrl.style.backgroundColor = cssRGB;
         this.$.opacityCtrl.style.backgroundColor = cssRGB;
-        this.$.opacityHandle.style.top = (1.0 - this.value.a) * 100 + "%";
-        this.$.hueHandle.style.top = (1.0 - this.hsv.h) * 100 + "%";
-        this.$.colorHandle.style.left = this.hsv.s * 100 + "%";
-        this.$.colorHandle.style.top = (1.0 - this.hsv.v) * 100 + "%";
+        this.$.opacityHandle.style.top = (1.0 - this.value.a) * 100 + '%';
+        this.$.hueHandle.style.top = (1.0 - this.hsv.h) * 100 + '%';
+        this.$.colorHandle.style.left = this.hsv.s * 100 + '%';
+        this.$.colorHandle.style.top = (1.0 - this.hsv.v) * 100 + '%';
     },
 
     _hueCtrlMouseDownAction: function ( event ) {
-        EditorUI.addDragGhost("crosshair");
+        event.stopPropagation();
+
+        EditorUI.addDragGhost('crosshair');
 
         var rect = this.$.hueCtrl.getBoundingClientRect();
         var mouseDownY = rect.top;
-        this.dragMove = true;
+        this._dragging = true;
 
         var updateMouseMove = function (event) {
+            event.stopPropagation();
+
             var offsetY = (event.clientY - mouseDownY) / this.$.hueCtrl.clientHeight;
             offsetY = Math.max( Math.min( offsetY, 1.0 ), 0.001 );
 
             this.hsv.h = 1.0 - offsetY;
             this._repaint();
             var h = Math.round( this.hsv.h * 100.0 ) / 100.0;
-            this.value = this.hsv2rgb( h, this.hsv.s, this.hsv.v );
-            this._notifyColor();
-            event.stopPropagation();
+            this.set( 'value', this.hsv2rgb( h, this.hsv.s, this.hsv.v ) );
         };
         updateMouseMove.call(this,event);
         this._repaint();
 
         var mouseMoveHandle = updateMouseMove.bind(this);
         var mouseUpHandle = (function(event) {
+            event.stopPropagation();
+
             document.removeEventListener('mousemove', mouseMoveHandle);
             document.removeEventListener('mouseup', mouseUpHandle);
 
             EditorUI.removeDragGhost();
-            this.dragMove = false;
-            event.stopPropagation();
+            this._dragging = false;
         }).bind(this);
         document.addEventListener ( 'mousemove', mouseMoveHandle );
         document.addEventListener ( 'mouseup', mouseUpHandle );
-
-        event.stopPropagation();
     },
 
     _colorCtrlMouseDownAction: function ( event ) {
-        EditorUI.addDragGhost("crosshair");
+        event.stopPropagation();
+
+        EditorUI.addDragGhost('crosshair');
 
         var rect = this.$.colorCtrl.getBoundingClientRect();
         var mouseDownX = rect.left;
         var mouseDownY = rect.top;
-        this.dragMove = true;
+        this._dragging = true;
 
         var updateMouseMove = function (event) {
+            event.stopPropagation();
+
             var offsetX = (event.clientX - mouseDownX) / this.$.colorCtrl.clientWidth;
             var offsetY = (event.clientY - mouseDownY) / this.$.colorCtrl.clientHeight;
 
@@ -90,69 +100,57 @@ Editor.registerWidget( 'color-picker', {
             this.hsv.s = offsetX;
             this.hsv.v = 1.0-offsetY;
             var h = Math.round( this.hsv.h * 100.0 ) / 100.0;
-            this.value = this.hsv2rgb( h, this.hsv.s, this.hsv.v );
-            this._notifyColor();
+            this.set( 'value', this.hsv2rgb( h, this.hsv.s, this.hsv.v ) );
 
             this._repaint();
-            event.stopPropagation();
         };
         updateMouseMove.call(this,event);
 
         var mouseMoveHandle = updateMouseMove.bind(this);
         var mouseUpHandle = (function(event) {
+            event.stopPropagation();
+
             document.removeEventListener('mousemove', mouseMoveHandle);
             document.removeEventListener('mouseup', mouseUpHandle);
 
             EditorUI.removeDragGhost();
-            this.dragMove = false;
-            event.stopPropagation();
+            this._dragging = false;
         }).bind(this);
         document.addEventListener ( 'mousemove', mouseMoveHandle );
         document.addEventListener ( 'mouseup', mouseUpHandle );
-
-        event.stopPropagation();
     },
 
     _opacityCtrlMouseDownAction: function (event) {
-        EditorUI.addDragGhost("crosshair");
+        event.stopPropagation();
+
+        EditorUI.addDragGhost('crosshair');
 
         var rect = this.$.opacityCtrl.getBoundingClientRect();
         var mouseDownY = rect.top;
-        this.dragMove = true;
+        this._dragging = true;
 
         var updateMouseMove = function (event) {
+            event.stopPropagation();
+
             var offsetY = (event.clientY - mouseDownY)/this.$.opacityCtrl.clientHeight;
             offsetY = Math.max( Math.min( offsetY, 1.0 ), 0.0 );
-            this.value.a = this._floatFixed(1.0 - offsetY);
-            this._notifyColor();
+            this.set( 'value.a', parseFloat((1.0 - offsetY).toFixed(2))  );
             this._repaint();
-
-            event.stopPropagation();
         };
         updateMouseMove.call(this,event);
 
         var mouseMoveHandle = updateMouseMove.bind(this);
         var mouseUpHandle = (function(event) {
+            event.stopPropagation();
+
             document.removeEventListener('mousemove', mouseMoveHandle);
             document.removeEventListener('mouseup', mouseUpHandle);
 
             EditorUI.removeDragGhost();
-            this.dragMove = false;
-            event.stopPropagation();
+            this._dragging = false;
         }).bind(this);
         document.addEventListener ( 'mousemove', mouseMoveHandle );
         document.addEventListener ( 'mouseup', mouseUpHandle );
-
-        event.stopPropagation();
-    },
-
-    _notifyColor: function () {
-        this.value = new Object({r: this.value.r, g: this.value.g, b: this.value.b, a: this.value.a});
-        this.fire('value-changed');
-    },
-
-    _floatFixed: function (value) {
-        return parseFloat(value.toFixed(2));
     },
 
     rgb2hsv: function ( r, g, b ) {
@@ -174,33 +172,20 @@ Editor.registerWidget( 'color-picker', {
         return rgb;
     },
 
-    _inputChanged: function (event) {
-        if (!this.value || this.dragMove === true) {
+    _onInputChanged: function (event) {
+        event.stopPropagation();
+
+        if ( this.value === undefined || this._dragging === true ) {
             return;
         }
+
         switch (event.target.hint) {
-            case 'R':
-                this.value.r = event.target.inputValue;
-            break;
-
-            case 'G':
-                this.value.g = event.target.inputValue;
-            break;
-
-            case 'B':
-                this.value.b = event.target.inputValue;
-            break;
-
-            case 'ALPHA':
-                this.value.a = event.target.inputValue;
-            break
+            case 'R': this.set( 'value.r', event.target.inputValue ); break;
+            case 'G': this.set( 'value.g', event.target.inputValue ); break;
+            case 'B': this.set( 'value.b', event.target.inputValue ); break;
+            case 'ALPHA': this.set( 'value.a', event.target.inputValue ); break;
         }
-        this._notifyColor();
         this.hsv = this.rgb2hsv(this.value.r, this.value.g, this.value.b);
         this._repaint();
-    },
-
-    close: function () {
-        this.remove();
     },
 });
