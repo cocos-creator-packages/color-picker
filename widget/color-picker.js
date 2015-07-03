@@ -20,20 +20,20 @@ Editor.registerWidget( 'color-picker', {
 
     setColor: function ( value ) {
         this.value = value;
-        this.hsv = this.rgb2hsv(this.value.r,this.value.g,this.value.b);
+        this.hsv = this.rgb2hsv(this.value.r, this.value.g, this.value.b);
         this._notifyColor();
         this._repaint();
     },
 
     _repaint: function () {
         var cssRGB = this.hsv2rgb( this.hsv.h, 1, 1 );
-        cssRGB = "rgb("+ (cssRGB.r) + "," + (cssRGB.g) + "," + (cssRGB.b) + ")";
+        cssRGB = chroma(cssRGB.r, cssRGB.g, cssRGB.b).css('rgb');
         this.$.colorCtrl.style.backgroundColor = cssRGB;
         this.$.opacityCtrl.style.backgroundColor = cssRGB;
-        this.$.opacityHandle.style.top = (1.0-this.value.a)*100 + "%";
-        this.$.hueHandle.style.top = (1.0-this.hsv.h)*100 + "%";
-        this.$.colorHandle.style.left = this.hsv.s*100 + "%";
-        this.$.colorHandle.style.top = (1.0-this.hsv.v)*100 + "%";
+        this.$.opacityHandle.style.top = (1.0 - this.value.a) * 100 + "%";
+        this.$.hueHandle.style.top = (1.0 - this.hsv.h) * 100 + "%";
+        this.$.colorHandle.style.left = this.hsv.s * 100 + "%";
+        this.$.colorHandle.style.top = (1.0 - this.hsv.v) * 100 + "%";
     },
 
     _hueCtrlMouseDownAction: function ( event ) {
@@ -44,12 +44,12 @@ Editor.registerWidget( 'color-picker', {
         this.dragMove = true;
 
         var updateMouseMove = function (event) {
-            var offsetY = (event.clientY - mouseDownY)/this.$.hueCtrl.clientHeight;
+            var offsetY = (event.clientY - mouseDownY) / this.$.hueCtrl.clientHeight;
             offsetY = Math.max( Math.min( offsetY, 1.0 ), 0.001 );
 
             this.hsv.h = 1.0 - offsetY;
             this._repaint();
-            var h = Math.round( this.hsv.h * 100.0 )/100.0;
+            var h = Math.round( this.hsv.h * 100.0 ) / 100.0;
             this.value = this.hsv2rgb( h, this.hsv.s, this.hsv.v );
             this._notifyColor();
             event.stopPropagation();
@@ -81,15 +81,15 @@ Editor.registerWidget( 'color-picker', {
         this.dragMove = true;
 
         var updateMouseMove = function (event) {
-            var offsetX = (event.clientX - mouseDownX)/this.$.colorCtrl.clientWidth;
-            var offsetY = (event.clientY - mouseDownY)/this.$.colorCtrl.clientHeight;
+            var offsetX = (event.clientX - mouseDownX) / this.$.colorCtrl.clientWidth;
+            var offsetY = (event.clientY - mouseDownY) / this.$.colorCtrl.clientHeight;
 
             offsetX = Math.max( Math.min( offsetX, 1.0 ), 0.0 );
             offsetY = Math.max( Math.min( offsetY, 1.0 ), 0.0 );
 
             this.hsv.s = offsetX;
             this.hsv.v = 1.0-offsetY;
-            var h = Math.round( this.hsv.h * 100.0 )/100.0;
+            var h = Math.round( this.hsv.h * 100.0 ) / 100.0;
             this.value = this.hsv2rgb( h, this.hsv.s, this.hsv.v );
             this._notifyColor();
 
@@ -123,7 +123,7 @@ Editor.registerWidget( 'color-picker', {
         var updateMouseMove = function (event) {
             var offsetY = (event.clientY - mouseDownY)/this.$.opacityCtrl.clientHeight;
             offsetY = Math.max( Math.min( offsetY, 1.0 ), 0.0 );
-            this.value.a = this._floatFixed(1.0-offsetY);
+            this.value.a = this._floatFixed(1.0 - offsetY);
             this._notifyColor();
             this._repaint();
 
@@ -196,7 +196,7 @@ Editor.registerWidget( 'color-picker', {
             break
         }
         this._notifyColor();
-        this.hsv = this.rgb2hsv(this.value.r,this.value.g,this.value.b);
+        this.hsv = this.rgb2hsv(this.value.r, this.value.g, this.value.b);
         this._repaint();
     },
 
