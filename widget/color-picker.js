@@ -44,7 +44,7 @@ Editor.registerWidget( 'color-picker', {
     _hueCtrlMouseDownAction: function ( event ) {
         event.stopPropagation();
 
-        EditorUI.addDragGhost('crosshair');
+        EditorUI.addDragGhost('pointer');
 
         var rect = this.$.hueCtrl.getBoundingClientRect();
         var mouseDownY = rect.top;
@@ -81,7 +81,7 @@ Editor.registerWidget( 'color-picker', {
     _colorCtrlMouseDownAction: function ( event ) {
         event.stopPropagation();
 
-        EditorUI.addDragGhost('crosshair');
+        EditorUI.addDragGhost('pointer');
 
         var rect = this.$.colorCtrl.getBoundingClientRect();
         var mouseDownX = rect.left;
@@ -123,7 +123,7 @@ Editor.registerWidget( 'color-picker', {
     _opacityCtrlMouseDownAction: function (event) {
         event.stopPropagation();
 
-        EditorUI.addDragGhost('crosshair');
+        EditorUI.addDragGhost('pointer');
 
         var rect = this.$.opacityCtrl.getBoundingClientRect();
         var mouseDownY = rect.top;
