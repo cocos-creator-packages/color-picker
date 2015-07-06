@@ -1,3 +1,4 @@
+<link rel="import" href="packages://ui-kit/widget/unit-input/unit-input.html">
 <script type="text/javascript" src="app://bower_components/chroma-js/chroma.min.js"></script>
 
 <dom-module id="color-picker">
@@ -25,19 +26,19 @@
 
         <div class="inputGroup">
             <div class="input">
-                <editor-unit-input hint="R" min="0" max="255"
+                <editor-unit-input hint="R" hint-color="red" min="0" max="255"
                     input-value="[[value.r]]"
                     on-input-value-changed="_onInputChanged"
                 ></editor-unit-input>
             </div>
             <div class="input">
-                <editor-unit-input hint="G" min="0" max="255"
+                <editor-unit-input hint="G" hint-color="green" min="0" max="255"
                     input-value="[[value.g]]"
                     on-input-value-changed="_onInputChanged"
                 ></editor-unit-input>
             </div>
             <div class="input">
-                <editor-unit-input hint="B" min="0" max="255"
+                <editor-unit-input hint="B" hint-color="blue" min="0" max="255"
                     input-value="[[value.b]]"
                     on-input-value-changed="_onInputChanged"
                 ></editor-unit-input>
