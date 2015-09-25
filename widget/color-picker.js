@@ -1,6 +1,4 @@
 Editor.registerWidget( 'color-picker', {
-    is: 'color-picker',
-
     properties: {
         value: {
             type: Object,
