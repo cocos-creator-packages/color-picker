@@ -6,9 +6,6 @@
   "hosts": {
     "editor-framework": "^0.3.15"
   },
-  "widgets": {
-    "color-picker": "widget/color-picker.html"
-  },
   "tests": [
     "test/basic.html"
   ]

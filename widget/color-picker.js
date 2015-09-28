@@ -1,4 +1,4 @@
-Editor.registerWidget( 'color-picker', {
+Editor.registerElement({
     properties: {
         value: {
             type: Object,
