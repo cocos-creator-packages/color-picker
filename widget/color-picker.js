@@ -13,7 +13,7 @@ Editor.registerElement({
                     r: 255,
                     g: 255,
                     b: 255,
-                    a: 1,
+                    a: 255,
                 };
             },
             notify: true,
@@ -40,9 +40,9 @@ Editor.registerElement({
         this.$.colorCtrl.style.backgroundColor = cssRGB;
         this.$.opacityCtrl.style.backgroundColor = cssRGB;
         this.$.opacityHandle.style.top = (255 - this.value.a) / 255 * 100 + '%';
-        this.$.hueHandle.style.top = (1.0 - this.hsv.h) * 100 + '%';
+        this.$.hueHandle.style.top = (1 - this.hsv.h) * 100 + '%';
         this.$.colorHandle.style.left = this.hsv.s * 100 + '%';
-        this.$.colorHandle.style.top = (1.0 - this.hsv.v) * 100 + '%';
+        this.$.colorHandle.style.top = (1 - this.hsv.v) * 100 + '%';
     },
 
     _hueCtrlMouseDownAction: function ( event ) {
@@ -136,9 +136,9 @@ Editor.registerElement({
         var updateMouseMove = function (event) {
             event.stopPropagation();
 
-            var offsetY = (event.clientY - mouseDownY) / this.$.opacityCtrl.clientHeight;
-            offsetY = Math.max( Math.min( offsetY, 1.0 ), 0.0 );
-            this.set( 'value.a', (1 - offsetY) * 255 | 0 );
+            var offsetY = (event.clientY - mouseDownY)/this.$.opacityCtrl.clientHeight*255;
+            offsetY = Math.max( Math.min( offsetY, 255 ), 0 );
+            this.set( 'value.a', parseInt((255 - offsetY))  );
             this._repaint();
         };
         updateMouseMove.call(this,event);
