@@ -1,5 +1,11 @@
 Editor.registerElement({
     properties: {
+        noAlpha: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true,
+        },
+
         value: {
             type: Object,
             value: function () {
@@ -33,7 +39,7 @@ Editor.registerElement({
         cssRGB = chroma(cssRGB.r, cssRGB.g, cssRGB.b).css('rgb');
         this.$.colorCtrl.style.backgroundColor = cssRGB;
         this.$.opacityCtrl.style.backgroundColor = cssRGB;
-        this.$.opacityHandle.style.top = (1.0 - this.value.a) * 100 + '%';
+        this.$.opacityHandle.style.top = (255 - this.value.a) / 255 * 100 + '%';
         this.$.hueHandle.style.top = (1.0 - this.hsv.h) * 100 + '%';
         this.$.colorHandle.style.left = this.hsv.s * 100 + '%';
         this.$.colorHandle.style.top = (1.0 - this.hsv.v) * 100 + '%';
@@ -130,9 +136,9 @@ Editor.registerElement({
         var updateMouseMove = function (event) {
             event.stopPropagation();
 
-            var offsetY = (event.clientY - mouseDownY)/this.$.opacityCtrl.clientHeight;
+            var offsetY = (event.clientY - mouseDownY) / this.$.opacityCtrl.clientHeight;
             offsetY = Math.max( Math.min( offsetY, 1.0 ), 0.0 );
-            this.set( 'value.a', parseFloat((1.0 - offsetY).toFixed(2))  );
+            this.set( 'value.a', (1 - offsetY) * 255 | 0 );
             this._repaint();
         };
         updateMouseMove.call(this,event);

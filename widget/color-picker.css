@@ -12,6 +12,10 @@
     box-shadow: 0 0 15px 2px rgba(0,0,0,0.5);
 }
 
+:host[no-alpha] {
+    height: 254px;
+}
+
 .color-group {
     display: flex;
     flex-direction: row;
@@ -21,6 +25,11 @@
     height: 150px;
     margin: 10px;
     position: relative
+}
+
+:host[no-alpha] .hue {
+    margin-left: 2px;
+    margin-right: 10px;
 }
 
 .hue {
@@ -48,6 +57,10 @@
     left: -6px;
 }
 
+:host[no-alpha] .color {
+    margin-right: 0;
+}
+
 .color {
     position: relative;
     width: 150px;
@@ -71,6 +84,10 @@
     font-size: 13px;
     top: -6px;
     left: -6px;
+}
+
+:host[no-alpha] .opacity {
+    display: none;
 }
 
 .opacity {
@@ -103,6 +120,10 @@
     margin: 10px;
     margin-top: 0px;
     flex-flow: column nowrap;
+}
+
+:host[no-alpha] .input:last-child {
+    display: none
 }
 
 .input {
