@@ -1,5 +1,11 @@
 Editor.registerElement({
     properties: {
+        noAlpha: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true,
+        },
+
         value: {
             type: Object,
             value: function () {
