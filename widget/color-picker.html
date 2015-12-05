@@ -1,5 +1,4 @@
 <link rel="import" href="packages://ui-kit/widget/unit-input/unit-input.html">
-<script type="text/javascript" src="app://bower_components/chroma-js/chroma.min.js"></script>
 
 <dom-module id="color-picker">
     <link rel="import" type="css" href="color-picker.css">
@@ -44,7 +43,7 @@
                 ></editor-unit-input>
             </div>
             <div class="input">
-                <editor-unit-input hint="ALPHA" min="0" max="1" step="0.01"
+                <editor-unit-input hint="ALPHA" min="0" max="255" step="1"
                     input-value="[[value.a]]"
                     on-input-value-changed="_onInputChanged"
                 ></editor-unit-input>
