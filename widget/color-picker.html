@@ -25,6 +25,12 @@
 
         <div class="inputGroup">
             <div class="input">
+                <editor-input
+                    value="[[css]]"
+                    on-value-changed="_onCssInputChanged"
+                ></editor-input>
+            </div>
+            <div class="input">
                 <editor-unit-input hint="R" hint-color="red" min="0" max="255"
                     input-value="[[value.r]]"
                     on-input-value-changed="_onInputChanged"
