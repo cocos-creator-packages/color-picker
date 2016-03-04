@@ -115,6 +115,18 @@
     right: -6px
 }
 
+.storageGroup {
+    height: 0;
+    position: relative;
+}
+
+.storageGroup color-storage {
+    position: absolute;
+    z-index: 1;
+    top: -66px;
+    left: 10px;
+}
+
 .inputGroup {
     display: flex;
     margin: 10px;

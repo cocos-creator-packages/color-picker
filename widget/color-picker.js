@@ -4,6 +4,11 @@
     const Chroma = require('chroma-js');
 
     Editor.registerElement({
+        listeners: {
+            'select-color': '_onSelectItemColor',
+            'change-color': '_onChangeItemColor'
+        },
+
         properties: {
             noAlpha: {
                 type: Boolean,
@@ -29,6 +34,11 @@
                 type: String,
                 value: '#FFFFFF'
             },
+
+            storage: {
+                type: String,
+                value: 'storage'
+            }
         },
 
         created: function () {
@@ -270,6 +280,35 @@
                 event.target.value = color.css;
                 this.set('css', color.css);
             }
+        },
+
+        _onSelectItemColor (event, color) {
+            event.stopPropagation();
+            event.preventDefault();
+            this.set('css', color);
+        },
+
+        _onChangeItemColor (event, index) {
+            event.stopPropagation();
+            event.preventDefault();
+            this.$.storage.changeItemColor(index, this.css);
+        },
+
+        _onCssMouseOver (event) {
+            event.stopPropagation();
+            event.preventDefault();
+            clearTimeout(this._hiddenStorageTimer);
+            this.$.storage.set('hidden', false);
+            this.$.storage.update();
+        },
+
+        _onCssMouseOut (event) {
+            event.stopPropagation();
+            event.preventDefault();
+            clearTimeout(this._hiddenStorageTimer);
+            this._hiddenStorageTimer = setTimeout(() => {
+                this.$.storage.set('hidden', true);
+            }, 400);
         }
     });
 })();
