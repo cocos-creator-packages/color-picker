@@ -1,5 +1,5 @@
 (()=> {
-    'use strict'
+    'use strict';
 
     const Chroma = require('chroma-js');
 
@@ -69,7 +69,7 @@
         _hueCtrlMouseDownAction: function ( event ) {
             event.stopPropagation();
 
-            EditorUI.addDragGhost('pointer');
+            Editor.UI.DomUtils.addDragGhost('pointer');
 
             var rect = this.$.hueCtrl.getBoundingClientRect();
             var mouseDownY = rect.top;
@@ -96,7 +96,7 @@
                 document.removeEventListener('mousemove', mouseMoveHandle);
                 document.removeEventListener('mouseup', mouseUpHandle);
 
-                EditorUI.removeDragGhost();
+                Editor.UI.DomUtils.removeDragGhost();
                 this._dragging = false;
             }).bind(this);
             document.addEventListener ( 'mousemove', mouseMoveHandle );
@@ -106,7 +106,7 @@
         _colorCtrlMouseDownAction: function ( event ) {
             event.stopPropagation();
 
-            EditorUI.addDragGhost('pointer');
+            Editor.UI.DomUtils.addDragGhost('pointer');
 
             var rect = this.$.colorCtrl.getBoundingClientRect();
             var mouseDownX = rect.left;
@@ -138,7 +138,7 @@
                 document.removeEventListener('mousemove', mouseMoveHandle);
                 document.removeEventListener('mouseup', mouseUpHandle);
 
-                EditorUI.removeDragGhost();
+                Editor.UI.DomUtils.removeDragGhost();
                 this._dragging = false;
             }).bind(this);
             document.addEventListener ( 'mousemove', mouseMoveHandle );
@@ -148,7 +148,7 @@
         _opacityCtrlMouseDownAction: function (event) {
             event.stopPropagation();
 
-            EditorUI.addDragGhost('pointer');
+            Editor.UI.DomUtils.addDragGhost('pointer');
 
             var rect = this.$.opacityCtrl.getBoundingClientRect();
             var mouseDownY = rect.top;
@@ -171,7 +171,7 @@
                 document.removeEventListener('mousemove', mouseMoveHandle);
                 document.removeEventListener('mouseup', mouseUpHandle);
 
-                EditorUI.removeDragGhost();
+                Editor.UI.DomUtils.removeDragGhost();
                 this._dragging = false;
             }).bind(this);
             document.addEventListener ( 'mousemove', mouseMoveHandle );
