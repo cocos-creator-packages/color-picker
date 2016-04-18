@@ -3,7 +3,7 @@
 
     const Chroma = require('chroma-js');
 
-    Editor.registerElement({
+    Editor.polymerElement({
         listeners: {
             'select-color': '_onSelectItemColor',
             'change-color': '_onChangeItemColor'
