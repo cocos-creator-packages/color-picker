@@ -1,9 +1,14 @@
 (()=> {
-    'use strict'
+    'use strict';
 
     const Chroma = require('chroma-js');
 
-    Editor.registerElement({
+    Editor.polymerElement({
+        listeners: {
+            'select-color': '_onSelectItemColor',
+            'change-color': '_onChangeItemColor'
+        },
+
         properties: {
             noAlpha: {
                 type: Boolean,
@@ -22,7 +27,18 @@
                     };
                 },
                 notify: true,
+                observer: '_onValueColorChanged',
             },
+
+            css: {
+                type: String,
+                value: '#FFFFFF'
+            },
+
+            storage: {
+                type: String,
+                value: 'storage'
+            }
         },
 
         created: function () {
@@ -53,7 +69,7 @@
         _hueCtrlMouseDownAction: function ( event ) {
             event.stopPropagation();
 
-            EditorUI.addDragGhost('pointer');
+            Editor.UI.addDragGhost('pointer');
 
             var rect = this.$.hueCtrl.getBoundingClientRect();
             var mouseDownY = rect.top;
@@ -80,7 +96,7 @@
                 document.removeEventListener('mousemove', mouseMoveHandle);
                 document.removeEventListener('mouseup', mouseUpHandle);
 
-                EditorUI.removeDragGhost();
+                Editor.UI.removeDragGhost();
                 this._dragging = false;
             }).bind(this);
             document.addEventListener ( 'mousemove', mouseMoveHandle );
@@ -90,7 +106,7 @@
         _colorCtrlMouseDownAction: function ( event ) {
             event.stopPropagation();
 
-            EditorUI.addDragGhost('pointer');
+            Editor.UI.addDragGhost('pointer');
 
             var rect = this.$.colorCtrl.getBoundingClientRect();
             var mouseDownX = rect.left;
@@ -122,7 +138,7 @@
                 document.removeEventListener('mousemove', mouseMoveHandle);
                 document.removeEventListener('mouseup', mouseUpHandle);
 
-                EditorUI.removeDragGhost();
+                Editor.UI.removeDragGhost();
                 this._dragging = false;
             }).bind(this);
             document.addEventListener ( 'mousemove', mouseMoveHandle );
@@ -132,7 +148,7 @@
         _opacityCtrlMouseDownAction: function (event) {
             event.stopPropagation();
 
-            EditorUI.addDragGhost('pointer');
+            Editor.UI.addDragGhost('pointer');
 
             var rect = this.$.opacityCtrl.getBoundingClientRect();
             var mouseDownY = rect.top;
@@ -155,7 +171,7 @@
                 document.removeEventListener('mousemove', mouseMoveHandle);
                 document.removeEventListener('mouseup', mouseUpHandle);
 
-                EditorUI.removeDragGhost();
+                Editor.UI.removeDragGhost();
                 this._dragging = false;
             }).bind(this);
             document.addEventListener ( 'mousemove', mouseMoveHandle );
@@ -181,6 +197,54 @@
             return rgb;
         },
 
+        rgb2str: function (r, g, b) {
+            r = r - 0;
+            var rStr = isNaN(r) ? '00' : r.toString(16);
+            rStr = rStr.length  === 1 ? '0' + rStr : rStr;
+
+            g = g - 0;
+            var gStr = isNaN(g) ? '00' : g.toString(16);
+            gStr = gStr.length  === 1 ? '0' + gStr : gStr;
+
+            b = b - 0;
+            var bStr = isNaN(b) ? '00' : b.toString(16);
+            bStr = bStr.length  === 1 ? '0' + bStr : bStr;
+
+            var str = '#' + rStr + gStr + bStr;
+            str = str.toUpperCase();
+            return str;
+        },
+
+        str2rgb: function (str) {
+            if (str[0] !== '#') {
+                str = '#' + str;
+            }
+
+            var strObject = String(str);
+            while (strObject.length < 7) {
+                strObject += '0';
+            }
+            var R = strObject.substr(1, 2);
+            var G = strObject.substr(3, 2);
+            var B = strObject.substr(5, 2);
+            var rNum = parseInt(R, 16);
+            var gNum = parseInt(G, 16);
+            var bNum = parseInt(B, 16);
+            if (isNaN(rNum)) {
+                R = '00';
+                rNum = 0;
+            }
+            if (isNaN(gNum)) {
+                G = '00';
+                gNum = 0;
+            }
+            if (isNaN(bNum)) {
+                B = '00';
+                bNum = 0;
+            }
+            return { r: rNum, g: gNum, b: bNum, css: '#' + R + G + B};
+        },
+
         _onInputChanged: function (event) {
             event.stopPropagation();
 
@@ -196,6 +260,55 @@
             }
             this.hsv = this.rgb2hsv(this.value.r, this.value.g, this.value.b);
             this._repaint();
+            this.set('css', this.rgb2str(this.value.r, this.value.g, this.value.b));
         },
+
+        _onValueColorChanged () {
+            this.set('css', this.rgb2str(this.value.r, this.value.g, this.value.b));
+        },
+
+        _onCssInputChanged: function (event) {
+            event.stopPropagation();
+
+            var value = event.target.value;
+            var color = this.str2rgb(value);
+            if (color) {
+                this.set( 'value.r', color.r );
+                this.set( 'value.g', color.g );
+                this.set( 'value.b', color.b );
+
+                event.target.value = color.css;
+                this.set('css', color.css);
+            }
+        },
+
+        _onSelectItemColor (event, color) {
+            event.stopPropagation();
+            event.preventDefault();
+            this.set('css', color);
+        },
+
+        _onChangeItemColor (event, index) {
+            event.stopPropagation();
+            event.preventDefault();
+            this.$.storage.changeItemColor(index, this.css);
+        },
+
+        _onCssMouseOver (event) {
+            event.stopPropagation();
+            event.preventDefault();
+            clearTimeout(this._hiddenStorageTimer);
+            this.$.storage.set('hidden', false);
+            this.$.storage.update();
+        },
+
+        _onCssMouseOut (event) {
+            event.stopPropagation();
+            event.preventDefault();
+            clearTimeout(this._hiddenStorageTimer);
+            this._hiddenStorageTimer = setTimeout(() => {
+                this.$.storage.set('hidden', true);
+            }, 400);
+        }
     });
 })();

@@ -1,4 +1,5 @@
 <link rel="import" href="packages://ui-kit/widget/unit-input/unit-input.html">
+<link rel="import" href="color-storage.html">
 
 <dom-module id="color-picker">
     <link rel="import" type="css" href="color-picker.css">
@@ -23,7 +24,24 @@
             </div>
         </div>
 
+        <div class="storageGroup">
+            <color-storage
+                    id="storage"
+                    storage="[[storage]]"
+                    on-mouseover="_onCssMouseOver"
+                    on-mouseout="_onCssMouseOut"
+                    hidden></color-storage>
+        </div>
+
         <div class="inputGroup">
+            <div class="input">
+                <editor-input
+                    value="[[css]]"
+                    on-value-changed="_onCssInputChanged"
+                    on-mouseover="_onCssMouseOver"
+                    on-mouseout="_onCssMouseOut"
+                ></editor-input>
+            </div>
             <div class="input">
                 <editor-unit-input hint="R" hint-color="red" min="0" max="255"
                     input-value="[[value.r]]"

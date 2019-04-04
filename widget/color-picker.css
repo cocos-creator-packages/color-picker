@@ -1,6 +1,6 @@
 :host {
     width: 210px;
-    height: 280px;
+    height: 304px;
     background: #474747;
     position: absolute;
     z-index: 999;
@@ -113,6 +113,18 @@
     font-size: 12px;
     top: -6px;
     right: -6px
+}
+
+.storageGroup {
+    height: 0;
+    position: relative;
+}
+
+.storageGroup color-storage {
+    position: absolute;
+    z-index: 1;
+    top: -66px;
+    left: 10px;
 }
 
 .inputGroup {
